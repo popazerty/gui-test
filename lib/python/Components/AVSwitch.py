@@ -71,7 +71,7 @@ class AVSwitch:
 		widescreen_modes = {"720p", "1080i"}
 
 	modes["YPbPr"] = modes["HDMI"]
-	if getBoxType().startswith('vu') or (getBoxType() in ('dm500hd', 'dm800')):
+	if getBrandOEM() == 'vuplus':
 		modes["Scart-YPbPr"] = modes["HDMI"]
 
 	# if modes.has_key("DVI-PC") and not getModeList("DVI-PC"):
