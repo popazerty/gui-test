@@ -28,7 +28,7 @@ class Standby2(Screen):
 	def Power(self):
 		print "leave standby"
 		if (getBrandOEM() in ('fulan')):
-+			open("/proc/stb/hdmi/output", "w").write("on")
+			open("/proc/stb/hdmi/output", "w").write("on")
 		#set input to encoder
 		self.avswitch.setInput("ENCODER")
 		#restart last played service
