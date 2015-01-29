@@ -2,8 +2,10 @@ from time import time
 from os import path
 from enigma import eServiceCenter, eServiceReference, eTimer, pNavigation, getBestPlayableServiceReference, iPlayableService
 from Components.ParentalControl import parentalControl
-from Components.SystemInfo import SystemInfo
+#from Components.SystemInfo import SystemInfo
 from Components.config import config
+from Components.PluginComponent import plugins
+from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
 from Tools.StbHardware import getFPWasTimerWakeup
 from time import time
@@ -36,6 +38,14 @@ class Navigation:
 		self.event = [ ]
 		self.record_event = [ ]
 		self.currentlyPlayingServiceReference = None
+		
+		self.RecordTimer = None
+		for p in plugins.getPlugins(PluginDescriptor.WHERE_RECORDTIMER):
+			self.RecordTimer = p()
+			if self.RecordTimer:
+				break
+		if not self.RecordTimer:
+
 		self.currentlyPlayingServiceOrGroup = None
 		self.currentlyPlayingService = None
 		self.RecordTimer = RecordTimer.RecordTimer()
@@ -181,7 +191,7 @@ class Navigation:
 		oldref = self.currentlyPlayingServiceOrGroup
 		if ref and oldref and ref == oldref and not forceRestart:
 			print "ignore request to play already running service(1)"
-			return 0
+			return 1
 		print "playing", ref and ref.toString()
 		if path.exists("/proc/stb/lcd/symbol_signal") and config.lcd.mode.value == '1':
 			try:
@@ -213,7 +223,7 @@ class Navigation:
 				print "playref", playref
 				if playref and oldref and playref == oldref and not forceRestart:
 					print "ignore request to play already running service(2)"
-					return 0
+					return 1
 				if not playref or (checkParentalControl and not parentalControl.isServicePlayable(playref, boundFunction(self.playService, checkParentalControl = False))):
 					self.stopService()
 					return 0
